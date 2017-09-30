@@ -11,17 +11,24 @@
 DOCKER_GROUP_ID=$(cut -d: -f3 < <(getent group docker))
 USER_ID=$(id -u $(whoami))
 GROUP_ID=$(id -g $(whoami))
+HOME_DIR=$(cut -d: -f6 < <(getent passwd ${USER_ID}))
 
-CMD="docker run --cpus 1 \
+CMD="docker run --hostname inside-docker \
                 --group-add ${DOCKER_GROUP_ID} \
-                --env HOME=/tmp \
+                --env HOME=${HOME_DIR} \
+                --env SSH_AUTH_SOCK=${SSH_AUTH_SOCK} \
                 --interactive \
                 --name zulu-build-test \
                 --rm \
                 --tty \
                 --user=${USER_ID}:${GROUP_ID} \
+                --volume ${SSH_AUTH_SOCK}:${SSH_AUTH_SOCK} \
                 --volume /var/run/docker.sock:/var/run/docker.sock \
-                --workdir /tmp \
+                --volume $(pwd):$(pwd) \
+                --volume ${HOME_DIR}:${HOME_DIR} \
+                --volume /etc/passwd:/etc/passwd \
+                --volume /etc/group:/etc/group \
+                --workdir $(pwd) \
                 dockerazuljdk9build_azul-jdk-9:latest $*"
 echo $CMD
 $CMD
