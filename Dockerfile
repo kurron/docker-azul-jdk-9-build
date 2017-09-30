@@ -1,7 +1,8 @@
 # Follows guidance from http://www.projectatomic.io/docs/docker-image-author-guidance/
+# and https://store.docker.com/images/openjdk
 
 # Base image off of the official Ubuntu-based image
-FROM azul/zulu-openjdk:8u144
+FROM azul/zulu-openjdk:9
 
 ENV DOCKER_VERSION=17.03.2-ce
 ENV COMPOSE_VERSION=1.16.1
@@ -39,13 +40,13 @@ RUN apt-get -qq update && \
 RUN apt-get -qq update && \
     apt-get -qqy install libgnomevfs2-0 libsecret-1-0 gnome-keyring
 
-# Install Docker client so we can build images and run automated tests 
+# Install Docker client so we can build images and run automated tests
 RUN curl --fail --silent --show-error --location --remote-name https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz && \
     tar --strip-components=1 -xvzf docker-${DOCKER_VERSION}.tgz -C /usr/local/bin && \
     rm -f docker-${DOCKER_VERSION}.tgz && \
     chmod 0555 /usr/local/bin/docker
 
-# Install Docker Compose so we can build images and run automated tests 
+# Install Docker Compose so we can build images and run automated tests
 RUN curl --fail --silent --show-error --location "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" --output /usr/local/bin/docker-compose && \
     chmod 0555 /usr/local/bin/docker-compose
 
@@ -58,4 +59,3 @@ RUN apt-get install --yes software-properties-common && \
 # remember to switch to the non-root user in child images
 # Switch to the non-root user
 USER powerless
-
