@@ -5,7 +5,7 @@
 FROM azul/zulu-openjdk:9
 
 ENV DOCKER_VERSION=17.03.2-ce
-ENV COMPOSE_VERSION=1.17.1
+ENV COMPOSE_VERSION=1.19.0
 
 MAINTAINER Ron Kurr <kurr@kurron.org>
 
